@@ -52,6 +52,8 @@ services:
     volumes:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_WEB_PATH_JUSTIFICATIFS}:/justificatifs/
+    ports:
+      - "17080:8080"
     labels:
       # pour envoyer les logs dans le puits de log de l'abes
       - "co.elastic.logs/enabled=true"
