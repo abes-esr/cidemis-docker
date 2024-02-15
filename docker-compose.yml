@@ -101,6 +101,7 @@ services:
       MAIL_WS_NOREPLY: ${CIDEMIS_MAIL_WS_NOREPLY}
       MAIL_WS_USERNAME: ${CIDEMIS_MAIL_WS_USERNAME}
       MAIL_WS_PASSWORD: ${CIDEMIS_MAIL_WS_PASSWORD}
+      CIDEMIS_BATCH_LAUNCH: ${CIDEMIS_BATCH_LAUNCH}
       # Pour signaler à Java qu'il peut utiliser toute (95%) la RAM dispo qu'on limite par ailleurs avec le paramètre plus haut mem_limit
       JVM_OPTS: "-XX:MaxRAMPercentage=95"
     labels:
