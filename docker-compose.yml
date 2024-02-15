@@ -1,0 +1,152 @@
+#
+# Ci-dessous la config qui permet de lancer cidemis-docker
+#
+# Remarque: avant de lancer docker-compose up, il faut régler le fichier .env
+# en partant du fichier .env-dist qui donne les variables d'environnements
+# à personnaliser et des exemples de valeurs.
+#
+
+version: "3.5"
+
+services:
+
+  ############################
+  # cidemis-web
+  # app web de cidemis
+  # (écrite en java spring boot)
+  cidemis-web:
+    image: abesesr/cidemis:${CIDEMIS_WEB_VERSION}
+    container_name: cidemis-web
+    restart: unless-stopped
+    mem_limit: ${MEM_LIMIT}
+    memswap_limit: ${MEM_LIMIT}
+    cpus: ${CPU_LIMIT}
+    environment:
+      # Pour basculer sur bon application-xxx.properties préalablement embarqué
+      # dans le code ici:
+      # https://github.com/abes-esr/abes-hello-back/tree/develop/web/src/main/resources/
+      SPRING_PROFILES_ACTIVE: ${CIDEMIS_SPRING_PROFILES_ACTIVE}
+      # Pour surcharger les paramètres spring du application-xxx.properties
+      # ci-dessous via le système de .env de docker
+      # https://www.linkedin.com/pulse/externalizing-properties-spring-boot-application-docker-phani-bushan
+      # pour la liste de tous les champs qu'on peut surcharger,
+      # voir le contenu des application-xxx.properties embarqués dans le code sources
+      CIDEMIS_DATASOURCE_URL: ${CIDEMIS_CIDEMIS_DATASOURCE_URL}
+      CIDEMIS_DATASOURCE_USERNAME: ${CIDEMIS_CIDEMIS_DATASOURCE_USERNAME}
+      CIDEMIS_DATASOURCE_PASSWORD: ${CIDEMIS_CIDEMIS_DATASOURCE_PASSWORD}
+      BASEXML_DATASOURCE_URL: ${CIDEMIS_BASEXML_DATASOURCE_URL}
+      BASEXML_DATASOURCE_USERNAME: ${CIDEMIS_BASEXML_DATASOURCE_USERNAME}
+      BASEXML_DATASOURCE_PASSWORD: ${CIDEMIS_BASEXML_DATASOURCE_PASSWORD}
+      CODE_PAYS_URL: ${CIDEMIS_CODE_PAYS_URL}
+      PSI_LIEN_PERENNE_ISSN: ${CIDEMIS_PSI_LIEN_PERENNE_ISSN}
+      MAIL_WS_URL: ${CIDEMIS_MAIL_WS_URL}
+      CIDEMIS_URL: ${CIDEMIS_CIDEMIS_URL}
+      CBS_URL: ${CIDEMIS_CBS_URL}
+      CBS_PORT: ${CIDEMIS_CBS_PORT}
+      CBS_PASSWORD: ${CIDEMIS_CBS_PASSWORD}
+      WSAUTHSUDOC_URL: ${CIDEMIS_WSAUTHSUDOC_URL}
+      MAIL_WS_TESTEURS: ${CIDEMIS_MAIL_WS_TESTEURS}
+      MAIL_WS_CIEPS: ${CIDEMIS_MAIL_WS_CIEPS}
+      MAIL_WS_NOREPLY: ${CIDEMIS_MAIL_WS_NOREPLY}
+      MAIL_WS_USERNAME: ${CIDEMIS_MAIL_WS_USERNAME}
+      MAIL_WS_PASSWORD: ${CIDEMIS_MAIL_WS_PASSWORD}
+      # Pour signaler à Java qu'il peut utiliser toute (95%) la RAM dispo qu'on limite par ailleurs avec le paramètre plus haut mem_limit
+      JVM_OPTS: "-XX:MaxRAMPercentage=95"
+    volumes:
+      - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
+      - ${CIDEMIS_WEB_PATH_JUSTIFICATIFS}:/justificatifs/
+    labels:
+      # pour envoyer les logs dans le puits de log de l'abes
+      - "co.elastic.logs/enabled=true"
+      - "co.elastic.logs/processors.add_fields.target="
+      - "co.elastic.logs/processors.add_fields.fields.abes_appli=cidemis"
+      - "co.elastic.logs/processors.add_fields.fields.abes_middleware=java-spring"
+      # pour que les mises à jour de cette image soient auto-déployées par watchtower
+      - "com.centurylinklabs.watchtower.scope=cidemis-watchtower-scope"
+
+
+  cidemis-batch:
+    image: abesesr/cidemis:${CIDEMIS_BATCH_VERSION}
+    container_name: cidemis-batch
+    restart: unless-stopped
+    mem_limit: ${MEM_LIMIT}
+    memswap_limit: ${MEM_LIMIT}
+    cpus: ${CPU_LIMIT}
+    volumes:
+      - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
+      - ${CIDEMIS_BATCH_PATH_STATISTIQUES}:/stats/
+    environment:
+      CIDEMIS_BATCH_CRON_STATS: ${CIDEMIS_BATCH_CRON_STATS}
+      CIDEMIS_BATCH_CRON_MAILING: ${CIDEMIS_BATCH_CRON_MAILING}
+      # Pour basculer sur bon application-xxx.properties préalablement embarqué
+      # dans le code ici:
+      # https://github.com/abes-esr/abes-hello-back/tree/develop/batch/src/main/resources/
+      SPRING_PROFILES_ACTIVE: ${CIDEMIS_SPRING_PROFILES_ACTIVE}
+      # Pour surcharger les paramètres spring du application-xxx.properties
+      # ci-dessous via le système de .env de docker
+      # https://www.linkedin.com/pulse/externalizing-properties-spring-boot-application-docker-phani-bushan
+      # pour la liste de tous les champs qu'on peut surcharger,
+      # voir le contenu des application-xxx.properties embarqués dans le code sources
+      CIDEMIS_DATASOURCE_URL: ${CIDEMIS_DATASOURCE_URL}
+      CIDEMIS_DATASOURCE_USERNAME: ${CIDEMIS_DATASOURCE_USERNAME}
+      CIDEMIS_DATASOURCE_PASSWORD: ${CIDEMIS_DATASOURCE_PASSWORD}
+      BASEXML_DATASOURCE_URL: ${CIDEMIS_BASEXML_DATASOURCE_URL}
+      BASEXML_DATASOURCE_USERNAME: ${CIDEMIS_BASEXML_DATASOURCE_USERNAME}
+      BASEXML_DATASOURCE_PASSWORD: ${CIDEMIS_BASEXML_DATASOURCE_PASSWORD}
+      CODE_PAYS_URL: ${CIDEMIS_CODE_PAYS_URL}
+      PSI_LIEN_PERENNE_ISSN: ${CIDEMIS_PSI_LIEN_PERENNE_ISSN}
+      MAIL_WS_URL: ${CIDEMIS_MAIL_WS_URL}
+      CIDEMIS_URL: ${CIDEMIS_CIDEMIS_URL}
+      CBS_URL: ${CIDEMIS_CBS_URL}
+      CBS_PORT: ${CIDEMIS_CBS_PORT}
+      CBS_LOGIN: ${CIDEMIS_LOGIN}
+      CBS_PASSWORD: ${CIDEMIS_CBS_PASSWORD}
+      WSAUTHSUDOC_URL: ${CIDEMIS_WSAUTHSUDOC_URL}
+      MAIL_WS_TESTEURS: ${CIDEMIS_MAIL_WS_TESTEURS}
+      MAIL_WS_CIEPS: ${CIDEMIS_MAIL_WS_CIEPS}
+      MAIL_WS_NOREPLY: ${CIDEMIS_MAIL_WS_NOREPLY}
+      MAIL_WS_USERNAME: ${CIDEMIS_MAIL_WS_USERNAME}
+      MAIL_WS_PASSWORD: ${CIDEMIS_MAIL_WS_PASSWORD}
+      # Pour signaler à Java qu'il peut utiliser toute (95%) la RAM dispo qu'on limite par ailleurs avec le paramètre plus haut mem_limit
+      JVM_OPTS: "-XX:MaxRAMPercentage=95"
+    labels:
+      # pour envoyer les logs dans le puits de log de l'abes
+      - "co.elastic.logs/enabled=true"
+      - "co.elastic.logs/processors.add_fields.target="
+      - "co.elastic.logs/processors.add_fields.fields.abes_appli=cidemis"
+      - "co.elastic.logs/processors.add_fields.fields.abes_middleware=java-spring"
+      # pour que les mises à jour de cette image soient auto-déployées par watchtower
+      - "com.centurylinklabs.watchtower.scope=cidemis-watchtower-scope"
+
+  #######################################
+  # cidemis-watchtower
+  # Conteneur chargé de mettre à jour automatiquement toutes les N secondes
+  # les images docker des conteneurs surveillés (via le système de label/scope de watchtower)
+  # plus d'info : https://containrrr.dev/watchtower
+  # cf README.md pour explications : https://github.com/abes-esr/cidemis-docker#d%C3%A9ploiement-continu
+  cidemis-watchtower:
+    image: containrrr/watchtower:1.4.0
+    container_name: cidemis-watchtower
+    restart: unless-stopped
+    mem_limit: ${MEM_LIMIT}
+    memswap_limit: ${MEM_LIMIT}
+    cpus: ${CPU_LIMIT}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_POLL_INTERVAL: 60
+      WATCHTOWER_DEBUG: "false"
+      WATCHTOWER_NO_STARTUP_MESSAGE: "true"
+      WATCHTOWER_WARN_ON_HEAD_FAILURE: "never"
+      WATCHTOWER_RUN_ONCE: ${CIDEMIS_WATCHTOWER_RUN_ONCE}
+      WATCHTOWER_NOTIFICATIONS: "slack"
+      WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL: ${CIDEMIS_WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL}
+      WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER: ${CIDEMIS_WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER}
+      WATCHTOWER_NOTIFICATION_SLACK_CHANNEL: "#notif-cidemis"
+      WATCHTOWER_SCOPE: "cidemis-watchtower-scope"
+    labels:
+      - "com.centurylinklabs.watchtower.scope=cidemis-watchtower-scope"
+
+
+
