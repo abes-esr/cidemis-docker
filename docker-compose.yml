@@ -52,6 +52,8 @@ services:
     volumes:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_WEB_PATH_JUSTIFICATIFS}:/justificatifs/
+      - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
+    command: bash -c "keytool -importcert -alias startssl -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -file /cert/cert.crt -noprompt && catalina.sh run"
     ports:
       - "17080:8080"
     labels:
@@ -74,6 +76,8 @@ services:
     volumes:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_BATCH_PATH_STATISTIQUES}:/stats/
+      - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
+    command: bash -c "keytool -importcert -alias startssl -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -file /cert/cert.crt -noprompt"
     environment:
       CIDEMIS_BATCH_CRON_STATS: ${CIDEMIS_BATCH_CRON_STATS}
       CIDEMIS_BATCH_CRON_MAILING: ${CIDEMIS_BATCH_CRON_MAILING}
