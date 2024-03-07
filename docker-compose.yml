@@ -77,7 +77,7 @@ services:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_BATCH_PATH_STATISTIQUES}:/stats/
       - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
-    command: bash -c "keytool -import -trustcacerts -cacerts -storepass changeit -file /cert/cert.crt -noprompt"
+    command: bash -c "keytool -import -trustcacerts -cacerts -alias cieps.crt -storepass changeit -file /cert/cert.crt -noprompt"
     environment:
       CIDEMIS_BATCH_CRON_STATS: ${CIDEMIS_BATCH_CRON_STATS}
       CIDEMIS_BATCH_CRON_MAILING: ${CIDEMIS_BATCH_CRON_MAILING}
