@@ -53,7 +53,7 @@ services:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_WEB_PATH_JUSTIFICATIFS}:/justificatifs/
       - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
-    command: bash -c "keytool -importcert -alias startssl -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -file /cert/cert.crt -noprompt && catalina.sh run"
+    command: bash -c "keytool -import -trustcacerts -cacerts -alias cieps.crt -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -file /cert/cert.crt -noprompt && catalina.sh run"
     ports:
       - "17080:8080"
     labels:
