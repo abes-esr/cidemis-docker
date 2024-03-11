@@ -53,7 +53,7 @@ services:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_WEB_PATH_JUSTIFICATIFS}:/justificatifs/
       - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
-      - certif.sh:/cert/certif.sh
+      - ./certif.sh:/cert/certif.sh
     command: bash -c "/cert/certif.sh && catalina.sh run"
     ports:
       - "17080:8080"
@@ -78,7 +78,7 @@ services:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_BATCH_PATH_STATISTIQUES}:/stats/
       - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
-      - certif.sh:/cert/certif.sh
+      - ./certif.sh:/cert/certif.sh
     command: bash -c "cert/certif.sh"
     environment:
       CIDEMIS_BATCH_CRON_STATS: ${CIDEMIS_BATCH_CRON_STATS}
