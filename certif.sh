@@ -9,7 +9,7 @@ nom_fichier="cert.crt"
 # Vérifier si le fichier existe dans le répertoire
 if [ -e "$repertoire/$nom_fichier" ]; then
     echo "Le certificat https existe dans le répertoire."
-    exit 1;
+    exit 0;
 else
     echo "Le certificat https n'existe pas dans le répertoire."
     keytool -import -trustcacerts -cacerts -storepass changeit -file /cert/cert.crt -noprompt
