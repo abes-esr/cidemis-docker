@@ -52,7 +52,7 @@ services:
     volumes:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_WEB_PATH_JUSTIFICATIFS}:/justificatifs/
-      - ${CIDEMIS_PATH_CERTWEB}:/cert/cert.crt
+      - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
       - ./certif.sh:/cert/certif.sh
     command: bash -c "chmod u+x /cert/certif.sh ; /cert/certif.sh && catalina.sh run"
     ports:
@@ -77,9 +77,8 @@ services:
     volumes:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_BATCH_PATH_STATISTIQUES}:/stats/
-      - ${CIDEMIS_PATH_CERTBATCH}:/cert/cert.crt
+      - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
       - ./certif.sh:/cert/certif.sh
-    command: bash -c "chmod u+x /cert/certif.sh ; /cert/certif.sh"
     environment:
       CIDEMIS_BATCH_CRON_STATS: ${CIDEMIS_BATCH_CRON_STATS}
       CIDEMIS_BATCH_CRON_MAILING: ${CIDEMIS_BATCH_CRON_MAILING}
