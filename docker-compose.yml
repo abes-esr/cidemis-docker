@@ -6,7 +6,6 @@
 # à personnaliser et des exemples de valeurs.
 #
 
-version: "3.5"
 
 services:
 
@@ -44,16 +43,14 @@ services:
       WSAUTHSUDOC_URL: ${CIDEMIS_WSAUTHSUDOC_URL}
       MAIL_WS_TESTEURS: ${CIDEMIS_MAIL_WS_TESTEURS}
       MAIL_WS_CIEPS: ${CIDEMIS_MAIL_WS_CIEPS}
-      MAIL_WS_NOREPLY: ${CIDEMIS_MAIL_WS_NOREPLY}
-      MAIL_WS_USERNAME: ${CIDEMIS_MAIL_WS_USERNAME}
-      MAIL_WS_PASSWORD: ${CIDEMIS_MAIL_WS_PASSWORD}
       # Pour signaler à Java qu'il peut utiliser toute (95%) la RAM dispo qu'on limite par ailleurs avec le paramètre plus haut mem_limit
       JVM_OPTS: "-XX:MaxRAMPercentage=95"
     volumes:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_WEB_PATH_JUSTIFICATIFS}:/justificatifs/
       - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
-    command: bash -c "keytool -importcert -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -file /cert/cert.crt -noprompt && catalina.sh run"
+      - ./certif.sh:/cert/certif.sh
+    command: bash -c "chmod u+x /cert/certif.sh ; /cert/certif.sh && catalina.sh run"
     ports:
       - "17080:8080"
     labels:
@@ -77,7 +74,7 @@ services:
       - ${CIDEMIS_PATH_MAIL_MENSUEL}:/mails/
       - ${CIDEMIS_BATCH_PATH_STATISTIQUES}:/stats/
       - ${CIDEMIS_PATH_CERT}:/cert/cert.crt
-    command: bash -c "keytool -importcert -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -file /cert/cert.crt -noprompt"
+      - ./certif.sh:/cert/certif.sh
     environment:
       CIDEMIS_BATCH_CRON_STATS: ${CIDEMIS_BATCH_CRON_STATS}
       CIDEMIS_BATCH_CRON_MAILING: ${CIDEMIS_BATCH_CRON_MAILING}
@@ -104,9 +101,6 @@ services:
       WSAUTHSUDOC_URL: ${CIDEMIS_WSAUTHSUDOC_URL}
       MAIL_WS_TESTEURS: ${CIDEMIS_MAIL_WS_TESTEURS}
       MAIL_WS_CIEPS: ${CIDEMIS_MAIL_WS_CIEPS}
-      MAIL_WS_NOREPLY: ${CIDEMIS_MAIL_WS_NOREPLY}
-      MAIL_WS_USERNAME: ${CIDEMIS_MAIL_WS_USERNAME}
-      MAIL_WS_PASSWORD: ${CIDEMIS_MAIL_WS_PASSWORD}
       CIDEMIS_BATCH_LAUNCH: ${CIDEMIS_BATCH_LAUNCH}
       # Pour signaler à Java qu'il peut utiliser toute (95%) la RAM dispo qu'on limite par ailleurs avec le paramètre plus haut mem_limit
       JVM_OPTS: "-XX:MaxRAMPercentage=95"
