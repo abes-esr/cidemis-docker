@@ -59,8 +59,8 @@ services:
       - "co.elastic.logs/processors.add_fields.target="
       - "co.elastic.logs/processors.add_fields.fields.abes_appli=cidemis"
       - "co.elastic.logs/processors.add_fields.fields.abes_middleware=java-spring"
-      - wud.watch: "true"
-      - wud.watch.digest: "true"
+      - "wud.watch=true"
+      - "wud.watch.digest=true"
 
 
   cidemis-batch:
@@ -110,5 +110,5 @@ services:
       - "co.elastic.logs/processors.add_fields.target="
       - "co.elastic.logs/processors.add_fields.fields.abes_appli=cidemis"
       - "co.elastic.logs/processors.add_fields.fields.abes_middleware=java-spring"
-      - wud.watch: "true"
-      - wud.watch.digest: "true"
+      - "wud.watch=true"
+      - "wud.watch.digest=true"
